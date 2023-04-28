@@ -19,8 +19,8 @@ function GetStart() {
         <div className="w-96 h-full rounded-full bg-[#406C64] relative z-30 right-10"></div>
         <div className="w-96 h-full rounded-full bg-blue-500 relative z-20 right-20"></div>
       </div> */}
-      <div className="self-center relative">
-        <img src={mainImage} alt="" />
+      <div className="self-center relative ">
+        <img className="" src={mainImage} alt="" />
         <a href="/login" className="absolute bottom-44 left-14 bg-[#D2F268] px-20 py-3 rounded-full text-2xl font-semibold">GET START</a>
       </div>
       {/* Bottom line */}
