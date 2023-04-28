@@ -1,0 +1,1 @@
+export default "https://q9es1866q5.execute-api.us-east-1.amazonaws.com/lectury";

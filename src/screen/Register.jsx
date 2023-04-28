@@ -1,13 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import Bookimg from "../assets/image/book-login.png";
 import Logo from "../assets/image/logo-darkgreen.png";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Register() {
-  const [name, setName] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
+
+  function SignupFunction() {
+    axios
+      .put(`${path}/user`, {
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        phone: phone,
+        password1: password1,
+        password2: password2,
+      })
+      .then((res) => {
+        if (res.data.length != 0) {
+          localStorage.setItem("userid", res.data);
+          router("/login");
+        }
+      })
+      .catch();
+  }
 
   return (
     <div className=" flex bg-[#F7F6F1] h-screen">
@@ -21,19 +43,27 @@ function Register() {
         {/* Logo */}
         <div className="GroupForm">
           <img src={Logo} alt="" />
-          <p className=" text-[#406C64] text-xl ml-4 mb-10">
+          <p className=" text-[#406C64] text-xl ml-4 mb-8">
             Create an account to get start !
           </p>
 
           {/* input */}
           <div className=" flex flex-col">
             {/* name */}
-            <p className="text-[#406C64] text-lg">Name</p>
+            <p className="text-[#406C64] text-lg">First Name</p>
             <input
               type="text"
               className=" border border-[#406C64] rounded-2xl bg-transparent mb-6 px-4 py-1.5"
               onChange={(event) => {
-                setName(event.target.value)
+                setFirstname(event.target.value);
+              }}
+            />
+            <p className="text-[#406C64] text-lg">Last Name</p>
+            <input
+              type="text"
+              className=" border border-[#406C64] rounded-2xl bg-transparent mb-6 px-4 py-1.5"
+              onChange={(event) => {
+                setLastname(event.target.value);
               }}
             />
             {/* email */}
@@ -42,7 +72,7 @@ function Register() {
               type="text"
               className=" border border-[#406C64] rounded-2xl bg-transparent mb-6 px-4 py-1.5"
               onChange={(event) => {
-                setEmail(event.target.value)
+                setEmail(event.target.value);
               }}
             />
             {/* phone */}
@@ -51,7 +81,7 @@ function Register() {
               type="phone"
               className=" border border-[#406C64] rounded-2xl bg-transparent mb-6 px-4 py-1.5"
               onChange={(event) => {
-                setPhone(event.target.value)
+                setPhone(event.target.value);
               }}
             />
             {/* password */}
@@ -60,28 +90,33 @@ function Register() {
               type="password"
               className=" border border-[#406C64] rounded-2xl bg-transparent mb-6 px-4 py-1.5"
               onChange={(event) => {
-                setPassword1(event.target.value)
+                setPassword1(event.target.value);
               }}
             />
             {/*Confirm password */}
             <p className="text-[#406C64] text-lg">Confirm Password</p>
             <input
               type="password"
-              className=" border border-[#406C64] rounded-2xl bg-transparent mb-16 px-4 py-1.5"
+              className=" border border-[#406C64] rounded-2xl bg-transparent mb-10 px-4 py-1.5"
               onChange={(event) => {
-                setPassword2(event.target.value)
+                setPassword2(event.target.value);
               }}
             />
 
             {/* button */}
-            <button className=" bg-[#406C64] rounded-2xl text-[#ffff] mb-6 py-1.5">
-              Register
+            <button
+              className=" bg-[#406C64] rounded-2xl text-[#ffff] mb-6 py-1.5"
+              onClick={() => {
+                SignupFunction();
+              }}
+            >
+              SIGN UP
             </button>
             <div className="text-center">
               <span className="text-lg">Already have account ? </span>
-              <a href="/login" to="" className="text-[#406C64] font-semibold">
+              <Link to="/login" className="text-[#406C64] font-semibold">
                 LOGIN
-              </a>
+              </Link>
             </div>
           </div>
         </div>

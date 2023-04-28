@@ -1,10 +1,30 @@
 import React, { useState } from "react";
 import Bookimg from "../assets/image/book-login.png";
 import Logo from "../assets/image/logo-darkgreen.png";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import path from "../../path";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useNavigate();
+
+  function LoginFunction() {
+    axios
+      .post(`${path}/user`, {
+        email: email,
+        password: password,
+      })
+      .then((res) => {
+        if (res.data.length != 0) {
+          localStorage.setItem("userid", res.data);
+          router("/");
+        }
+      })
+      .catch();
+  }
 
   return (
     <div className=" flex bg-[#F7F6F1] h-screen">
@@ -36,7 +56,7 @@ function Login() {
               className=" border border-[#406C64] rounded-2xl bg-transparent mb-6 px-4 py-1.5"
               style={{}}
               onChange={(event) => {
-                setEmail(event.target.value)
+                setEmail(event.target.value);
               }}
             />
 
@@ -46,23 +66,24 @@ function Login() {
               type="password"
               className=" border border-[#406C64] rounded-2xl bg-transparent mb-16 px-4 py-1.5"
               onChange={(event) => {
-                setPassword(event.target.value)
+                setPassword(event.target.value);
               }}
             />
 
             {/* button */}
-            <button className=" bg-[#406C64] rounded-2xl text-[#ffff] mb-6 py-1.5">
+            <button
+              className=" bg-[#406C64] rounded-2xl text-[#ffff] mb-6 py-1.5"
+              onClick={() => {
+                LoginFunction();
+              }}
+            >
               LOGIN
             </button>
             <div className="text-center">
               <span className="text-lg">Don’t have an account? </span>
-              <a
-                href="/register"
-                to=""
-                className="text-[#406C64] font-semibold"
-              >
+              <Link to="/signup" className="text-[#406C64] font-semibold">
                 SIGN UP
-              </a>
+              </Link>
             </div>
           </div>
         </div>
