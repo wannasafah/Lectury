@@ -13,15 +13,15 @@ function Login() {
 
   function LoginFunction() {
     axios
-      .post(`${path}/user`, {
+      .post(`${path}/login`, {
         email: email,
         password: password,
       })
       .then((res) => {
-        if (res.data.length != 0) {
+        console.log(res.data);
           localStorage.setItem("userid", res.data);
           router("/");
-        }
+        
       })
       .catch();
   }

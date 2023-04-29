@@ -3,6 +3,8 @@ import Bookimg from "../assets/image/book-login.png";
 import Logo from "../assets/image/logo-darkgreen.png";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import path from "../../path";
 
 function Register() {
   const [firstname, setFirstname] = useState("");
@@ -11,24 +13,25 @@ function Register() {
   const [phone, setPhone] = useState("");
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
+  const router = useNavigate();
 
   function SignupFunction() {
-    axios
-      .put(`${path}/user`, {
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        phone: phone,
-        password1: password1,
-        password2: password2,
-      })
-      .then((res) => {
-        if (res.data.length != 0) {
-          localStorage.setItem("userid", res.data);
-          router("/login");
-        }
-      })
-      .catch();
+    if (password1 == password2) {
+      axios
+        .post(`${path}/adduser`, {
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          tel: phone,
+          password: password1,
+        })
+        .then((res) => {
+          if (res.data == "successfully") {
+            router("/login");
+          }
+        })
+        .catch();
+    }
   }
 
   return (
