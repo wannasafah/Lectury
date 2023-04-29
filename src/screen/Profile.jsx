@@ -70,7 +70,46 @@ function Profile(){
         isLiked: true,
         isBookMarked: true
     },
-
+    {
+        id:6,
+        title: "Book name",
+        author: "Writer's name",
+        bookImg: "../assets/image/Book6.svg",
+        isLiked: true,
+        isBookMarked: true
+    },
+    {
+        id:7,
+        title: "Book name",
+        author: "Writer's name",
+        bookImg: "../assets/image/Book6.svg",
+        isLiked: true,
+        isBookMarked: true
+    },
+    {
+        id:7,
+        title: "Book name",
+        author: "Writer's name",
+        bookImg: "../assets/image/Book6.svg",
+        isLiked: true,
+        isBookMarked: true
+    },
+    {
+        id:7,
+        title: "Book name",
+        author: "Writer's name",
+        bookImg: "../assets/image/Book6.svg",
+        isLiked: true,
+        isBookMarked: true
+    },
+    {
+        id:7,
+        title: "Book name",
+        author: "Writer's name",
+        bookImg: "../assets/image/Book6.svg",
+        isLiked: true,
+        isBookMarked: true
+    },
     ])
     return (
 
@@ -122,9 +161,10 @@ function Profile(){
                 <div className="ml-24">
                     <h1 className="text-4xl mb-6">Your Lecture</h1>
                     <div className="flex">
-                        <img src={PrevItems} alt=""  className="mr-12"/>
-                        {books.map((book) => (
-                            <div className="Book mr-12" key={book.id}>
+                        {books.map((book, i) => {
+                            if( i < 6)
+                            return(
+                                <div className="Book mr-12" key={book.id}>
                             <img src={Book1} alt="" className=""/>
                             <p className="font-black">{book.title}</p>
                             <p>{book.author}</p>
@@ -133,7 +173,8 @@ function Profile(){
                                 <img src={SmallBookMarked} alt="" />
                             </div>
                         </div>
-                        ))}
+                            )
+                            })}
                         <img src={NextItems} alt="" className="next"/>
                     </div>
                 </div>
