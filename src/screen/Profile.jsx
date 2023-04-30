@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Logo from "../assets/image/logo-lightgreen.svg";
+import Logo from "../assets/image/logo-darkgreen.png";
 import NoProfile from "../assets/image/no-profile.jpg";
 import Edit from "../assets/image/edit-profile.svg";
 import MailIcon from "../assets/image/mail-icon.svg";
@@ -18,6 +18,7 @@ import SmallHeart from "../assets/image/smallheartlogo.svg";
 import SmallBookMarked from "../assets/image/smallbookmarklogo.svg";
 import NextItems from "../assets/image/next-items.svg";
 import PrevItems from "../assets/image/prev-items.svg";
+import X from "../assets/image/x.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import path from "../../path";
@@ -25,6 +26,7 @@ import path from "../../path";
 function Profile() {
   const router = useNavigate();
   const [user, setUser] = useState();
+  const [modal, setModal] = useState(false);
 
   const [books, setBooks] = useState([
     {
@@ -91,6 +93,52 @@ function Profile() {
   }, []);
   return (
     <div className="bg-[#F7F6F1] h-screen">
+      {modal && (
+        <div className=" absolute h-full w-full">
+          {/* modal */}
+          <div className=" h-full absolute flex justify-center items-center w-full">
+            <div className="w-full h-full absolute bg-[#24272C]  opacity-50"></div>
+            <div className="bg-[#F7F6F1] w-[40%] z-50 rounded-xl p-28 flex justify-center flex-col relative">
+              <img
+                src={X}
+                className=" w-7 absolute right-5 top-5 cursor-pointer"
+                alt=""
+                onClick={()=>{
+                  setModal(false)
+                }}
+              />
+              <img src={Logo} className="w-[50%] mb-6" alt="" />
+
+              <p className="mb-1">Title</p>
+              <input
+                type="text"
+                className="w-full border border-[#406C64] rounded-2xl bg-transparent mb-4 px-4 py-1.5"
+              />
+
+              <p className="mb-1">Description</p>
+              <textarea
+                type="text"
+                className="w-full border border-[#406C64] rounded-2xl bg-transparent mb-4 px-4 py-1.5"
+              />
+
+              <p className="mb-1">Upload File</p>
+              <input className="" id="upfile" type="file" />
+              {/* <label htmlFor="upfile">
+          <button>Upload File</button>
+        </label> */}
+
+              <button
+                className=" bg-[#406C64] rounded-2xl text-[#ffff] mt-4 py-1.5 w-full"
+                onClick={() => {
+                  SignupFunction();
+                }}
+              >
+                Add Lecture
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Top part */}
       <div className="w-full bg-[#24272C] px-32 py-10">
         <img src={Logo} alt="" />
@@ -105,7 +153,9 @@ function Profile() {
           {/* Information */}
           {user && (
             <div className="">
-              <p className="text-5xl text-[#F7F6F1]">{user.firstname + " " + user.lastname}</p>
+              <p className="text-5xl text-[#F7F6F1]">
+                {user.firstname + " " + user.lastname}
+              </p>
               <div className="flex mt-8">
                 <img src={MailIcon} alt="" className="mr-4" />
                 <p className="text-2xl text-[#F7F6F1]">{user.email}</p>
@@ -119,8 +169,11 @@ function Profile() {
           <img src={ImageInProfile} alt="" className="" />
         </div>
         <button
-          className="bg-[#D2F268] relative px-16 py-2.5 rounded-full shadow-xl text-2xl left-2"
+          className="bg-[#D2F268] px-16 py-2.5 rounded-full shadow-xl text-2xl left-2"
           style={{ top: "65px" }}
+          onClick={()=>{
+            setModal(true)
+          }}
         >
           Add Lecture
         </button>
