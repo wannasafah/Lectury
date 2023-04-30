@@ -5,6 +5,7 @@ import Login from './screen/Login'
 import Register from './screen/Register'
 import GetStart from './screen/GetStart'
 import Profile from './screen/Profile'
+import QandA from './screen/QandA'
 import { RequireAuth } from './auth/RequireAuth'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Register />} />
         <Route path='/profile' element={<RequireAuth><Profile /></RequireAuth>} />
+        <Route path='/question' element={<RequireAuth><QandA /></RequireAuth>} />
       </Routes>
     </BrowserRouter>
   )
