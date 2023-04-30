@@ -78,8 +78,47 @@ function Profile() {
       isLiked: true,
       isBookMarked: true,
     },
+    {
+      id: 6,
+      title: "Book name",
+      author: "Writer's name",
+      bookImg: "../assets/image/Book6.svg",
+      isLiked: true,
+      isBookMarked: true,
+    },
+    {
+      id: 7,
+      title: "Book name",
+      author: "Writer's name",
+      bookImg: "../assets/image/Book6.svg",
+      isLiked: true,
+      isBookMarked: true,
+    },
+    {
+      id: 7,
+      title: "Book name",
+      author: "Writer's name",
+      bookImg: "../assets/image/Book6.svg",
+      isLiked: true,
+      isBookMarked: true,
+    },
+    {
+      id: 7,
+      title: "Book name",
+      author: "Writer's name",
+      bookImg: "../assets/image/Book6.svg",
+      isLiked: true,
+      isBookMarked: true,
+    },
+    {
+      id: 7,
+      title: "Book name",
+      author: "Writer's name",
+      bookImg: "../assets/image/Book6.svg",
+      isLiked: true,
+      isBookMarked: true,
+    },
   ]);
-
   useEffect(() => {
     axios
       .post(`${path}/getuser`, {
@@ -108,26 +147,22 @@ function Profile() {
                   setModal(false);
                 }}
               />
-              <img src={Logo} className="w-[50%] mb-6" alt="" />
-
+              <img src={Logo} className="w-[50%] mb-6" alt="" /> ])
               <p className="mb-1">Title</p>
               <input
                 type="text"
                 className="w-full border border-[#406C64] rounded-2xl bg-transparent mb-4 px-4 py-1.5"
               />
-
               <p className="mb-1">Description</p>
               <textarea
                 type="text"
                 className="w-full border border-[#406C64] rounded-2xl bg-transparent mb-4 px-4 py-1.5"
               />
-
               <p className="mb-1">Upload File</p>
               <input className="" id="upfile" type="file" />
               {/* <label htmlFor="upfile">
           <button>Upload File</button>
         </label> */}
-
               <button
                 className=" bg-[#406C64] rounded-2xl text-[#ffff] mt-4 py-1.5 w-full"
                 onClick={() => {
@@ -136,6 +171,47 @@ function Profile() {
               >
                 Add Lecture
               </button>
+            </div>
+          </div>
+          {/* Bottom Part */}
+          <div className="flex px-24 pt-28">
+            {/* Left Part */}
+            <div className="w-96">
+              <div className="flex items-center justify-center">
+                <img src={LogoHeart} alt="" />
+                <p className="text-3xl ml-2">Your favorite</p>
+              </div>
+              <hr className="h-px border-0 bg-gray-700 mb-1 mt-4" />
+              <div className="flex items-center mt-4 justify-center">
+                <img src={LogoBookMark} alt="" />
+                <p className="text-3xl ml-2">Your Bookmark</p>
+              </div>
+              <hr className="h-px border-0 bg-gray-700 mb-1 mt-4" />
+              <div className="flex items-center mt-4 justify-center">
+                <img src={LogoLogout} alt="" />
+                <p className="text-3xl ml-2">Logout</p>
+              </div>
+            </div>
+            {/* Middle Part */}
+            <div className="ml-24">
+              <h1 className="text-4xl mb-6">Your Lecture</h1>
+              <div className="flex">
+                {books.map((book, i) => {
+                  if (i < 6)
+                    return (
+                      <div className="Book mr-12" key={book.id}>
+                        <img src={Book1} alt="" className="" />
+                        <p className="font-black">{book.title}</p>
+                        <p>{book.author}</p>
+                        <div className="flex">
+                          <img src={SmallHeart} alt="" />
+                          <img src={SmallBookMarked} alt="" />
+                        </div>
+                      </div>
+                    );
+                })}
+                <img src={NextItems} alt="" className="next" />
+              </div>
             </div>
           </div>
         </div>
