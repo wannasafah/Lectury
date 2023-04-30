@@ -27,6 +27,7 @@ function Profile() {
   const router = useNavigate();
   const [user, setUser] = useState();
   const [modal, setModal] = useState(false);
+  const [modallogout, setModallogout] = useState(false);
 
   const [books, setBooks] = useState([
     {
@@ -93,9 +94,9 @@ function Profile() {
   }, []);
   return (
     <div className="bg-[#F7F6F1] h-screen">
+      {/* modal add lecture*/}
       {modal && (
         <div className=" absolute h-full w-full">
-          {/* modal */}
           <div className=" h-full absolute flex justify-center items-center w-full">
             <div className="w-full h-full absolute bg-[#24272C]  opacity-50"></div>
             <div className="bg-[#F7F6F1] w-[40%] z-50 rounded-xl p-28 flex justify-center flex-col relative">
@@ -103,8 +104,8 @@ function Profile() {
                 src={X}
                 className=" w-7 absolute right-5 top-5 cursor-pointer"
                 alt=""
-                onClick={()=>{
-                  setModal(false)
+                onClick={() => {
+                  setModal(false);
                 }}
               />
               <img src={Logo} className="w-[50%] mb-6" alt="" />
@@ -135,6 +136,47 @@ function Profile() {
               >
                 Add Lecture
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* modal logout*/}
+      {modallogout && (
+        <div className=" absolute h-full w-full">
+          <div className=" h-full absolute flex justify-center items-center w-full">
+            <div className="w-full h-full absolute bg-[#24272C]  opacity-50"></div>
+            <div className="bg-[#F7F6F1] w-[40%] z-50 rounded-xl p-20 flex justify-center flex-col relative">
+              {/* <img
+                src={X}
+                className=" w-7 absolute right-5 top-5 cursor-pointer"
+                alt=""
+                onClick={() => {
+                  setModal(false);
+                }}
+              /> */}
+              <img src={Logo} className="w-[50%] mb-6" alt="" />
+              {/* text */}
+              <p className="mb-1 text-2xl">Are you sure you want to logout?</p>
+
+              <div className=" grid grid-cols-2 gap-4 mt-6">
+                <button
+                  className=" bg-transparent border border-[#406C64] rounded-2xl text-[#24272C] py-1.5 w-full"
+                  onClick={() => {
+                    setModallogout(false);
+                  }}
+                >
+                  CANCEL
+                </button>
+                <button
+                  className=" bg-[#406C64] rounded-2xl text-[#ffff] py-1.5 w-full"
+                  onClick={() => {
+                    localStorage.removeItem("userid");
+                    router("/login");
+                  }}
+                >
+                  LOGOUT
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -171,8 +213,8 @@ function Profile() {
         <button
           className="bg-[#D2F268] px-16 py-2.5 rounded-full shadow-xl text-2xl left-2"
           style={{ top: "65px" }}
-          onClick={()=>{
-            setModal(true)
+          onClick={() => {
+            setModal(true);
           }}
         >
           Add Lecture
@@ -195,8 +237,7 @@ function Profile() {
           <div
             className="flex items-center mt-4 justify-center cursor-pointer"
             onClick={() => {
-              localStorage.removeItem("userid");
-              router("/login");
+              setModallogout(true);
             }}
           >
             <img src={LogoLogout} alt="" />
