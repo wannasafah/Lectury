@@ -22,12 +22,78 @@ import X from "../assets/image/x.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import path from "../../path";
+import Select from "react-select";
+import { Buffer } from "buffer";
 
 function Profile() {
   const router = useNavigate();
   const [user, setUser] = useState();
   const [modal, setModal] = useState(false);
   const [modallogout, setModallogout] = useState(false);
+  const [select, setSelect] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [file, setFile] = useState();
+
+  const style = {
+    control: (base) => ({
+      ...base,
+      // This line disable the blue border
+      boxShadow: "none",
+      background: "transparent",
+      borderColor: "#406C64",
+    }),
+  };
+  const options = [
+    // Language
+    { value: "Language", label: "Language" },
+    { value: "English", label: "English" },
+    { value: "Chinese", label: "Chinese" },
+    { value: "Japanese", label: "Japanese" },
+    { value: "Korean", label: "Korean" },
+    { value: "French", label: "French" },
+    { value: "German", label: "German" },
+    { value: "Spanish", label: "Spanish" },
+    { value: "Russian", label: "Russian" },
+    // Math
+    { value: "Mathematics", label: "Mathematics" },
+    { value: "Algebra", label: "Algebra" },
+    { value: "Geometry", label: "Geometry" },
+    { value: "Trigonometry", label: "Trigonometry" },
+    { value: "Calculus", label: "Calculus" },
+    { value: "Statistics", label: "Statistics" },
+    { value: "Number Theory", label: "Number Theory" },
+    // Science
+    { value: "Science", label: "Science" },
+    { value: "Physics", label: "Physics" },
+    { value: "Chemistry", label: "Chemistry" },
+    { value: "Biology", label: "Biology" },
+    { value: "Earth Science", label: "Earth Science" },
+    { value: "Astronomy", label: "Astronomy" },
+    { value: "Computer Science", label: "Computer Science" },
+    { value: "Engineering", label: "Engineering" },
+    { value: "Psychology", label: "Psychology" },
+    { value: "Economics", label: "Economics" },
+    { value: "Law", label: "Law" },
+    { value: "Finance", label: "Finance" },
+    { value: "Other", label: "Other" },
+    // Social Studies
+    { value: "Social Studies", label: "Social Studies" },
+    { value: "History", label: "History" },
+    { value: "Geography", label: "Geography" },
+    { value: "Political Science", label: "Political Science" },
+    { value: "Sociology", label: "Sociology" },
+    { value: "Anthropology", label: "Anthropology" },
+    { value: "Business", label: "Business" },
+    // Health
+    { value: "Health", label: "Health" },
+    { value: "Medicine", label: "Medicine" },
+    // Technology
+    { value: "Technology", label: "Technology" },
+    { value: "Artificial Intelligence", label: "Artificial Intelligence" },
+    { value: "Machine Learning", label: "Machine Learning" },
+    { value: "Data Science", label: "Data Science" },
+  ];
 
   const [books, setBooks] = useState([
     {
@@ -107,6 +173,32 @@ function Profile() {
         console.log(err);
       });
   }, []);
+  const uploadlecture = () => {
+    const filedecode = file; // the file object of the image
+    const reader = new FileReader();
+    reader.readAsDataURL(filedecode);
+    reader.onload = () => {
+      const base64File = reader.result.split(",")[1];
+      axios
+        .post(`${path}/adddocument`, {
+          document: base64File,
+          id: localStorage.getItem("userid"),
+          fileName: filedecode.name,
+          doc: {
+            category: select,
+            dateAdd: new Date(),
+            fileName: filedecode.name,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+  };
+
   return (
     <div className="bg-[#F7F6F1] h-screen">
       {/* modal add lecture*/}
@@ -124,25 +216,72 @@ function Profile() {
                 }}
               />
               <img src={Logo} className="w-[50%] mb-6" alt="" />
+              {/* title */}
               <p className="mb-1">Title</p>
               <input
                 type="text"
-                className="w-full border border-[#406C64] rounded-2xl bg-transparent mb-4 px-4 py-1.5"
+                className="w-full border border-[#406C64] rounded-lg bg-transparent mb-4 px-4 py-1.5"
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
               />
+              {/* description */}
               <p className="mb-1">Description</p>
               <textarea
                 type="text"
-                className="w-full border border-[#406C64] rounded-2xl bg-transparent mb-4 px-4 py-1.5"
+                rows={3}
+                className="w-full border border-[#406C64] rounded-lg bg-transparent mb-4 px-4 py-1.5"
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                }}
               />
+              {/* category */}
+              <p className="mb-1">Category</p>
+              {/* <select
+                className="w-full border border-[#406C64] bg-transparent mb-4 px-4 py-1.5 cursor-pointer"
+                // style={{ fontFamily: "jura" }}
+              >
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select> */}
+              <Select
+                defaultValue={select}
+                isMulti
+                styles={style}
+                name="category"
+                onChange={(e) => {
+                  setSelect(Array.isArray(e) ? e.map((x) => x.value) : []);
+                }}
+                options={options}
+                className="basic-multi-select focus:outline-none border-1 mb-4 "
+                classNamePrefix="select"
+              />
+              {/* upload file */}
               <p className="mb-1">Upload File</p>
-              <input className="" id="upfile" type="file" />
-              {/* <label htmlFor="upfile">
-          <button>Upload File</button>
-        </label> */}
+              <input
+                className=""
+                id="upfile"
+                type="file"
+                onChange={(e) => {
+                  setFile(e.target.files[0]);
+                }}
+              />
+
               <button
                 className=" bg-[#406C64] rounded-2xl text-[#ffff] mt-8 py-1.5 w-full"
                 onClick={() => {
-                  SignupFunction();
+                  uploadlecture();
+                  setModal(false);
                 }}
               >
                 Add Lecture
@@ -196,12 +335,12 @@ function Profile() {
       <div className="w-full bg-[#24272C] px-32 py-10">
         <img src={Logo} alt="" />
         {/* Profile container*/}
-        <div className="flex items-center justify-between px-8">
+        <div className="flex items-center justify-between px-8 ">
           <div
-            className="w-52 h-52 rounded-full bg-cover relative"
+            className="w-52 h-52 rounded-full bg-cover "
             style={{ backgroundImage: `url(${NoProfile})` }}
           >
-            <img src={Edit} alt="" className=" absolute left-36" />
+            <img src={Edit} alt="" className=" float-right" />
           </div>
           {/* Information */}
           {user && (
@@ -265,18 +404,18 @@ function Profile() {
             {/* <img src={PrevItems} alt="" className="mr-12" /> */}
             {books.map((book, index) => {
               if (index < 5)
-              return(
-                <div className="Book mr-12" key={book.id}>
-                <img src={Book1} alt="" className="" />
-                <p className="font-black">{book.title}</p>
-                <p>{book.author}</p>
-                <div className="flex">
-                  {/* <img src={SmallHeart} alt="" />
+                return (
+                  <div className="Book mr-12" key={book.id}>
+                    <img src={Book1} alt="" className="" />
+                    <p className="font-black">{book.title}</p>
+                    <p>{book.author}</p>
+                    <div className="flex">
+                      {/* <img src={SmallHeart} alt="" />
                                 <img src={SmallBookMarked} alt="" /> */}
-                </div>
-              </div>
-              )
-})}
+                    </div>
+                  </div>
+                );
+            })}
             <img src={NextItems} alt="" className="next" />
           </div>
         </div>
