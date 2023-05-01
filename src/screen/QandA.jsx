@@ -40,11 +40,21 @@ function QandA() {
         "ถึงรุ่นพี่ที่จบ ม.3 นะคะ คือหนูอยากทราบว่า เนื้อหา ม.3 ที่เอาเป็นแบบคร่าวๆก็ได้ค่ะ มีเนื้อหาอะไรบ้างคะ หนูอยากศึกษาไว้ล่วงหน้าก่อนขึ้นม.3 ค่ะ ขอบคุณพี่ๆที่ตอบนะคะ",
     },
   ]);
+  function openModal (){
+    setModal(true);
+    // document.body.style.position = 'fixed';
+    document.body.style.top = `-${window.scrollY}px`;
+  }
+  function closeModal (){
+    setModal(false);
+    document.body.style.position = '';
+    document.body.style.top = '';
+  }
   return (
     <div className="min-h-screen bg-[#F7F6F1]">
       {/* modal add lecture*/}
       {modal && (
-        <div className=" absolute h-full w-full">
+        <div className="h-full w-full fixed z-10">
           <div className=" h-full absolute flex justify-center items-center w-full">
             <div className="w-full h-full absolute bg-[#24272C]  opacity-50"></div>
             <div className="bg-[#F7F6F1] w-[40%] z-50 rounded-xl p-24 flex justify-center flex-col relative">
@@ -53,7 +63,7 @@ function QandA() {
                 className=" w-7 absolute right-5 top-5 cursor-pointer"
                 alt=""
                 onClick={() => {
-                  setModal(false);
+                  closeModal();
                 }}
               />
               <img src={Logodark} className="w-[50%] mb-6" alt="" />
@@ -101,7 +111,7 @@ function QandA() {
             <button
               className="bg-[#D2F268] px-6 py-1.5 rounded-full shadow-xl text-lg font-semibold mt-10"
               onClick={() => {
-                setModal(true);
+                openModal();
               }}
             >
               Add Question
@@ -153,9 +163,7 @@ function QandA() {
             <div className="mx-32 border border-[#406C64] rounded-2xl overflow-hidden mb-16">
               <div className="flex items-center px-12 py-6">
                 <div
-                  className="w-12 h-12 bg-white rounded-full bg-cover"
-                  style={{ backgroundImage: `url(${NoProfile})` }}
-                ></div>
+                  className="w-12 h-12 bg-white rounded-full bg-cover" style={{ backgroundImage: `url(${NoProfile})` }}></div>
                 <p className="ml-4 text-xl">Wannasa Chonchoochart</p>
               </div>
               <h3 className="mx-16 text-lg">Title</h3>
