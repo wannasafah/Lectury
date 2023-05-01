@@ -263,8 +263,10 @@ function Profile() {
           <h1 className="text-4xl mb-6">Your Lecture</h1>
           <div className="flex">
             {/* <img src={PrevItems} alt="" className="mr-12" /> */}
-            {books.map((book) => (
-              <div className="Book mr-12" key={book.id}>
+            {books.map((book, index) => {
+              if (index < 5)
+              return(
+                <div className="Book mr-12" key={book.id}>
                 <img src={Book1} alt="" className="" />
                 <p className="font-black">{book.title}</p>
                 <p>{book.author}</p>
@@ -273,7 +275,8 @@ function Profile() {
                                 <img src={SmallBookMarked} alt="" /> */}
                 </div>
               </div>
-            ))}
+              )
+})}
             <img src={NextItems} alt="" className="next" />
           </div>
         </div>
