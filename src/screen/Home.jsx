@@ -9,6 +9,8 @@ import HomeImage2 from "../assets/image/HomeImage2.svg"
 import SearchLogo from "../assets/image/black-search-icon.svg"
 import GreenProfile from "../assets/image/white-green-profile-icon.svg"
 import FooterImage from "../assets/image/footer.svg"
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 function Home(){
     const router = useNavigate();
@@ -107,27 +109,7 @@ function Home(){
     return(
         <div className="min-h-screen bg-[#F7F6F1] pt-10">
             {/* Navbar */}
-            <div
-          className="bg-[#24272C] mx-20 rounded-full px-28 py-3 flex justify-between"
-        >
-          <img src={Logo} alt="" className="cursor-pointer" onClick={() => {
-            router("/home");
-          }}/>
-          {/* Search */}
-          <div className="flex justify-center items-center">
-          <div className="relative">
-          <input id="thisone" className="bg-[#D9D9D9] rounded-full py-1 pl-12 mr-6">
-          </input>
-          <label
-            htmlFor="thisone"
-            className="absolute inset-y-0 left-0 flex items-center pl-3"
-          >
-            <img src={SearchLogo} alt="search" className="w-" />
-          </label>
-          </div>
-          <img src={GreenProfile} alt="" />
-          </div>
-        </div>
+            <Navbar/>
         
         <img src={HomeImage1} className="px-44 mt-8" alt="" />
         {/* New Arrival */}
@@ -171,9 +153,7 @@ function Home(){
           }}/>
             </div>
         </div>
-        <footer className="bg-[#24272C] pl-44 py-7 mt-20">
-            <img src={FooterImage} alt="" className=""/>
-        </footer>
+        <Footer/>
         </div>
     )
 }

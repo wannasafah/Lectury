@@ -18,8 +18,9 @@ import SmallHeart from "../assets/image/smallheartlogo.svg";
 import SmallBookMarked from "../assets/image/smallbookmarklogo.svg";
 import NextItems from "../assets/image/next-items.svg";
 import PrevItems from "../assets/image/prev-items.svg";
+import PDFViewer from "../components/PDFViewer";
 import X from "../assets/image/x.png";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import path from "../../path";
 import Select from "react-select";
@@ -34,7 +35,7 @@ function Profile() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState();
-
+  const [dataDoc, setDataDoc] = useState();
   const style = {
     control: (base) => ({
       ...base,
@@ -161,7 +162,8 @@ function Profile() {
       isBookMarked: true,
     },
   ]);
-  useEffect(() => {
+
+  function GetUser() {
     axios
       .post(`${path}/getuser`, {
         id: localStorage.getItem("userid"),
@@ -172,6 +174,20 @@ function Profile() {
       .catch((err) => {
         console.log(err);
       });
+  }
+  function GetMyDocument() {
+    axios
+      .post(`${path}/getmydocuments`, {
+        userid: parseInt(localStorage.getItem("userid")),
+      })
+      .then((res) => {
+        setDataDoc(res.data);
+      })
+      .catch((err) => console.log(err));
+  }
+  useEffect(() => {
+    GetUser();
+    GetMyDocument();
   }, []);
   const uploadlecture = () => {
     const filedecode = file; // the file object of the image
@@ -190,10 +206,13 @@ function Profile() {
             category: select,
             dateAdd: new Date(),
             fileName: filedecode.name,
+            title: title,
+            description: description,
           },
         })
         .then((res) => {
           console.log(res.data);
+          GetMyDocument()
         })
         .catch((err) => {
           console.log(err);
@@ -202,10 +221,10 @@ function Profile() {
   };
 
   return (
-    <div className="bg-[#F7F6F1] h-screen">
+    <div className="bg-[#F7F6F1] min-h-screen pb-12">
       {/* modal add lecture*/}
       {modal && (
-        <div className=" absolute h-full w-full">
+        <div className=" fixed h-full w-full z-50">
           <div className=" h-full absolute flex justify-center items-center w-full">
             <div className="w-full h-full absolute bg-[#24272C]  opacity-50"></div>
             <div className="bg-[#F7F6F1] w-[40%] z-50 rounded-xl p-28 flex justify-center flex-col relative">
@@ -386,23 +405,28 @@ function Profile() {
         {/* Middle Part */}
         <div className="ml-24">
           <h1 className="text-4xl mb-6">Your Lecture</h1>
-          <div className="flex">
+          <div className="grid grid-cols-5 gap-4">
             {/* <img src={PrevItems} alt="" className="mr-12" /> */}
-            {books.map((book, index) => {
-              if (index < 5)
-                return (
-                  <div className="Book mr-12" key={book.id}>
-                    <img src={Book1} alt="" className="" />
-                    <p className="font-black">{book.title}</p>
-                    <p>{book.author}</p>
-                    <div className="flex">
-                      {/* <img src={SmallHeart} alt="" />
+            {dataDoc &&
+              dataDoc.file.map((file, index) => {
+                if (index < 5)
+                  return (
+                    <Link to={file.url.replaceAll(" ", "%20")} className="Book mr-12 cursor-pointer" key={index}>
+                      <PDFViewer fileUrl={file.url.replaceAll(" ", "%20")} />
+                      <p className="font-black">{dataDoc.doc[index].title}</p>
+                      <p className="truncate">
+                        {dataDoc.doc[index].firstname +
+                          " " +
+                          dataDoc.doc[index].lastname}
+                      </p>
+                      <div className="flex">
+                        {/* <img src={SmallHeart} alt="" />
                                 <img src={SmallBookMarked} alt="" /> */}
-                    </div>
-                  </div>
-                );
-            })}
-            <img src={NextItems} alt="" className="next" />
+                      </div>
+                    </Link>
+                  );
+              })}
+            {/* <img src={NextItems} alt="" className="next" /> */}
           </div>
         </div>
       </div>
