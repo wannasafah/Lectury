@@ -182,9 +182,11 @@ function Profile() {
       axios
         .post(`${path}/adddocument`, {
           document: base64File,
-          id: localStorage.getItem("userid"),
           fileName: filedecode.name,
           doc: {
+            id: localStorage.getItem("userid"),
+            firstname: user.firstname,
+            lastname: user.lastname,
             category: select,
             dateAdd: new Date(),
             fileName: filedecode.name,
@@ -237,23 +239,7 @@ function Profile() {
               />
               {/* category */}
               <p className="mb-1">Category</p>
-              {/* <select
-                className="w-full border border-[#406C64] bg-transparent mb-4 px-4 py-1.5 cursor-pointer"
-                // style={{ fontFamily: "jura" }}
-              >
-                <option value="January">January</option>
-                <option value="February">February</option>
-                <option value="March">March</option>
-                <option value="April">April</option>
-                <option value="May">May</option>
-                <option value="June">June</option>
-                <option value="July">July</option>
-                <option value="August">August</option>
-                <option value="September">September</option>
-                <option value="October">October</option>
-                <option value="November">November</option>
-                <option value="December">December</option>
-              </select> */}
+              {/* select category */}
               <Select
                 defaultValue={select}
                 isMulti
