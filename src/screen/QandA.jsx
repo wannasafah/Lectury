@@ -2,13 +2,14 @@ import Logo from "../assets/image/logo-lightgreen.svg";
 import Logodark from "../assets/image/logo-darkgreen.png";
 import Readtogether from "../assets/image/readtogether.svg";
 import SearchLogo from "../assets/image/search-icon.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NoProfile from "../assets/image/no-profile.jpg";
 import X from "../assets/image/x.png";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import axios from "axios";
 import path from "../../path";
+import uuid from "react-uuid";
 
 function QandA() {
   const router = useNavigate();
@@ -16,6 +17,7 @@ function QandA() {
   const [title, setTitle] = useState("");
   const [select, setSelect] = useState([]);
   const [description, setDescription] = useState("");
+  const [user, setUser] = useState();
   const [question, setQuestion] = useState([
     {
       id: 0,
@@ -105,7 +107,18 @@ function QandA() {
     { value: "Machine Learning", label: "Machine Learning" },
     { value: "Data Science", label: "Data Science" },
   ];
-
+  useEffect(() => {
+    axios
+      .post(`${path}/getuser`, {
+        id: localStorage.getItem("userid"),
+      })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   function openModal() {
     setModal(true);
     // document.body.style.position = 'fixed';
@@ -121,8 +134,11 @@ function QandA() {
       .put(`${path}/mythread`, {
         thread: {
           userid: localStorage.getItem("userid"),
+          t_id: uuid(),
           comments: [],
           category: select,
+          firstname: user.firstname,
+          lastname: user.lastname,
           thread: {
             topic: title,
             description: description,
@@ -151,6 +167,7 @@ function QandA() {
                 alt=""
                 onClick={() => {
                   closeModal();
+                  setSelect([]);
                 }}
               />
               <img src={Logodark} className="w-[50%] mb-6" alt="" />
@@ -193,6 +210,8 @@ function QandA() {
                 className=" bg-[#406C64] rounded-2xl text-[#ffff] mt-8 py-1.5 w-full shadow-lg"
                 onClick={() => {
                   Addquestion();
+                  setModal(false);
+                  setSelect([]);
                 }}
               >
                 Add Question
