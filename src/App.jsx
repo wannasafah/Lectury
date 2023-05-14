@@ -9,6 +9,8 @@ import QandA from './screen/QandA'
 import Category from './screen/Category'
 import { RequireAuth } from './auth/RequireAuth'
 import Comment from './screen/Comment'
+import Showmore from './screen/Showmore'
+import Loading from './screen/Loading'
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path='/question' element={<RequireAuth><QandA /></RequireAuth>} />
         <Route path='/comment' element={<Comment/>}/>
         <Route path='/category' element={<RequireAuth><Category /></RequireAuth>} />
+        <Route path='/showmore' element={<RequireAuth><Showmore /></RequireAuth>} />
+        <Route path='loading' element={<Loading/>}/>
       </Routes>
     </BrowserRouter>
   )

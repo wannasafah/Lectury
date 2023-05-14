@@ -12,7 +12,7 @@ function Navbar(){
           className="bg-[#24272C] mx-20 rounded-full px-28 py-3 flex justify-between"
         >
           <img src={Logo} alt="" className="cursor-pointer" onClick={() => {
-            router("/home");
+            router("/");
           }}/>
           {/* Search */}
           <div className="flex justify-center items-center">
@@ -26,7 +26,9 @@ function Navbar(){
             <img src={SearchLogo} alt="search" className="w-" />
           </label>
           </div>
-          <img src={GreenProfile} alt="" />
+          <img src={GreenProfile} alt="" className="cursor-pointer" onClick={() => {
+            router("/profile");
+          }}/>
           </div>
         </div>
     )

@@ -3,39 +3,48 @@ import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import path from "../../path";
+import uuid from "react-uuid";
 function Comment() {
   const [thread, setThread] = useState();
   const [comment, setComment] = useState();
   const [textComment, setTextComment] = useState("");
-  useEffect(() => {
+  function GetThread() {
     axios
       .post(`${path}/getthreadid`, {
         t_id: "44863703-8459-a2f4-f953-f6fa9a7cd9e9",
       })
       .then((res) => {
         setThread(res.data[0]);
-        setComment(res.data[0].comment);
+        setComment(res.data[0].comments);
         console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
+  }
+  useEffect(() => {
+    GetThread();
   }, []);
 
   function AddComment() {
+    console.log(1);
     axios
       .post(`${path}/addcomment`, {
-        thread_id: thread.t_id,
+        t_id: thread.t_id,
         comment: {
-          id: "1",
+          id: uuid(),
           firstname: "jean",
           lastname: "tiwat",
           comment: textComment,
-          user_id : localStorage.getItem('userid')
+          user_id: localStorage.getItem("userid"),
         },
       })
       .then((res) => {
         console.log(res.data);
+        if (res.data == "successfully") {
+          GetThread();
+          setTextComment("")
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -64,13 +73,18 @@ function Comment() {
           </div>
           <hr className="my-12 border-0 bg-black h-px" />
           {/* User Comment */}
-          <div className="border border-[#366159] rounded-2xl p-4 mx-12 mb-6">
-            <div className="flex items-center">
-              <div className="bg-white w-10 h-10 rounded-full"></div>
-              <h1 className="ml-4 text-xl">Wannasa Chonchoochart</h1>
-            </div>
-            <p className="ml-14 mt-3">ลองไปศึกษาพวกคณิตศาสตร์เพิ่มเติมนะ</p>
-          </div>
+          {comment &&
+            comment.map((value, index) => (
+              <div key={index} className="border border-[#366159] rounded-2xl p-4 mx-12 mb-6">
+                <div className="flex items-center">
+                  <div className="bg-white w-10 h-10 rounded-full"></div>
+                  <h1 className="ml-4 text-xl">
+                    {value.firstname + " " + value.lastname}
+                  </h1>
+                </div>
+                <p className="ml-14 mt-3">{value.comment}</p>
+              </div>
+            ))}
 
           {/* Comment here */}
           <div className="mx-12 mt-12">

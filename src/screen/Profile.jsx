@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Logo from "../assets/image/logo-darkgreen.png";
+import Logo from "../assets/image/logo-lightgreen.svg";
 import NoProfile from "../assets/image/no-profile.jpg";
 import Edit from "../assets/image/edit-profile.svg";
 import MailIcon from "../assets/image/mail-icon.svg";
@@ -31,11 +31,17 @@ function Profile() {
   const [user, setUser] = useState();
   const [modal, setModal] = useState(false);
   const [modallogout, setModallogout] = useState(false);
+  const [modalEditProfile, setModalEditProfile] = useState(false);
   const [select, setSelect] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState();
   const [dataDoc, setDataDoc] = useState();
+  const [profileImg, setProfileImg] = useState();
+  const [editFirstname, setEditFirstname] = useState("");
+  const [editLastname, setEditLastname] = useState("")
+  const [editPassword, setEditPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const style = {
     control: (base) => ({
       ...base,
@@ -47,122 +53,45 @@ function Profile() {
   };
   const options = [
     // Language
-    { value: "Language", label: "Language" },
     { value: "English", label: "English" },
     { value: "Chinese", label: "Chinese" },
     { value: "Japanese", label: "Japanese" },
     { value: "Korean", label: "Korean" },
-    { value: "French", label: "French" },
-    { value: "German", label: "German" },
-    { value: "Spanish", label: "Spanish" },
-    { value: "Russian", label: "Russian" },
+    { value: "Thai", label: "Thai" },
     // Math
-    { value: "Mathematics", label: "Mathematics" },
     { value: "Algebra", label: "Algebra" },
-    { value: "Geometry", label: "Geometry" },
-    { value: "Trigonometry", label: "Trigonometry" },
     { value: "Calculus", label: "Calculus" },
-    { value: "Statistics", label: "Statistics" },
-    { value: "Number Theory", label: "Number Theory" },
     // Science
-    { value: "Science", label: "Science" },
     { value: "Physics", label: "Physics" },
     { value: "Chemistry", label: "Chemistry" },
-    { value: "Biology", label: "Biology" },
-    { value: "Earth Science", label: "Earth Science" },
     { value: "Astronomy", label: "Astronomy" },
-    { value: "Computer Science", label: "Computer Science" },
-    { value: "Engineering", label: "Engineering" },
-    { value: "Psychology", label: "Psychology" },
-    { value: "Economics", label: "Economics" },
+    { value: "Computer", label: "Computer" },
     { value: "Law", label: "Law" },
-    { value: "Finance", label: "Finance" },
+    { value: "Religion", label: "Religion" },
+    { value: "Marketing", label: "Marketing" },
     { value: "Other", label: "Other" },
     // Social Studies
-    { value: "Social Studies", label: "Social Studies" },
     { value: "History", label: "History" },
-    { value: "Geography", label: "Geography" },
-    { value: "Political Science", label: "Political Science" },
     { value: "Sociology", label: "Sociology" },
-    { value: "Anthropology", label: "Anthropology" },
-    { value: "Business", label: "Business" },
     // Health
-    { value: "Health", label: "Health" },
-    { value: "Medicine", label: "Medicine" },
-    // Technology
-    { value: "Technology", label: "Technology" },
-    { value: "Artificial Intelligence", label: "Artificial Intelligence" },
-    { value: "Machine Learning", label: "Machine Learning" },
-    { value: "Data Science", label: "Data Science" },
-  ];
+    { value: "Health", label: "Health" }
+];
 
-  const [books, setBooks] = useState([
-    {
-      id: 0,
-      title: "Book name",
-      author: "Writer's name",
-      bookImg: "Book1",
-      isLiked: true,
-      isBookMarked: true,
-    },
-    {
-      id: 1,
-      title: "Book name",
-      author: "Writer's name",
-      bookImg: "../assets/image/Book2.svg",
-      isLiked: true,
-      isBookMarked: true,
-    },
-    {
-      id: 2,
-      title: "Book name",
-      author: "Writer's name",
-      bookImg: "../assets/image/Book3.svg",
-      isLiked: true,
-      isBookMarked: true,
-    },
-    {
-      id: 3,
-      title: "Book name",
-      author: "Writer's name",
-      bookImg: "../assets/image/Book4.svg",
-      isLiked: true,
-      isBookMarked: true,
-    },
-    {
-      id: 4,
-      title: "Book name",
-      author: "Writer's name",
-      bookImg: "../assets/image/Book5.svg",
-      isLiked: true,
-      isBookMarked: true,
-    },
-    {
-      id: 5,
-      title: "Book name",
-      author: "Writer's name",
-      bookImg: "../assets/image/Book6.svg",
-      isLiked: true,
-      isBookMarked: true,
-    },
-    {
-      id: 6,
-      title: "Book name",
-      author: "Writer's name",
-      bookImg: "../assets/image/Book6.svg",
-      isLiked: true,
-      isBookMarked: true,
-    },
-    {
-      id: 7,
-      title: "Book name",
-      author: "Writer's name",
-      bookImg: "../assets/image/Book6.svg",
-      isLiked: true,
-      isBookMarked: true,
-    },
-  ]);
 
+  function UpdateUser(){
+    console.log(1);
+    axios.post(`${path}/updateuser`, {
+      id : localStorage.getItem('userid'),
+      firstname : editFirstname,
+      lastname : editLastname,
+      password : editPassword
+    })
+  }
+  function openModalEditProfile(){
+    setEditFirstname(user.firstname)
+    setEditLastname(user.lastname)
+    setModalEditProfile(true)
+  } 
   function GetUser() {
     axios
       .post(`${path}/getuser`, {
@@ -170,6 +99,7 @@ function Profile() {
       })
       .then((res) => {
         setUser(res.data);
+        console.log(res.data)
       })
       .catch((err) => {
         console.log(err);
@@ -222,6 +152,86 @@ function Profile() {
 
   return (
     <div className="bg-[#F7F6F1] min-h-screen pb-12">
+      {/* modal Edit Profile */}
+      {modalEditProfile && (
+        <div className=" fixed h-full w-full z-50">
+          <div className=" h-full absolute flex justify-center items-center w-full">
+            <div className="w-full h-full absolute bg-[#24272C]  opacity-50"></div>
+            <div className="bg-[#F7F6F1] w-[40%] z-50 rounded-xl p-28 flex justify-center flex-col relative">
+              <img
+                src={X}
+                className=" w-7 absolute right-5 top-5 cursor-pointer"
+                alt=""
+                onClick={() => {
+                  setModalEditProfile(false);
+                }}
+              />
+              <h1 className="text-4xl mb-4">Edit Profile</h1>
+              {/* FIrstname */}
+              <p className="mb-1">Firstname</p>
+              <input
+                type="text"
+                className="w-full border border-[#406C64] rounded-lg bg-transparent mb-4 px-4 py-1.5"
+                value={editFirstname}
+                onChange={(e) => {
+                  setEditFirstname(e.target.value);
+                }}
+              />
+              {/* Lastname */}
+              <p className="mb-1">Lastname</p>
+              <input
+                type="text"
+                className="w-full border border-[#406C64] rounded-lg bg-transparent mb-4 px-4 py-1.5"
+                value={editLastname}
+                onChange={(e) => {
+                  setEditLastname(e.target.value);
+                }}
+              />
+              {/* Tel */}
+              <p className="mb-1">Password</p>
+              <input
+                type="password"
+                className="w-full border border-[#406C64] rounded-lg bg-transparent mb-4 px-4 py-1.5"
+                value={editPassword}
+                onChange={(e) => {
+                  setEditPassword(e.target.value);
+                }}
+              />
+              <p className="mb-1">Confirm Password</p>
+              <input
+                type="password"
+                className="w-full border border-[#406C64] rounded-lg bg-transparent mb-4 px-4 py-1.5"
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
+              />
+              {/* upload file */}
+              <p className="mb-1">Upload Profile Image</p>
+              <input
+                className=""
+                id="upfile"
+                type="file"
+                onChange={(e) => {
+                  setProfileImg(e.target.files[0]);
+                  console.log(e.target.files[0])
+                }}
+              />
+
+              <button
+                className=" bg-[#406C64] rounded-2xl text-[#ffff] mt-8 py-1.5 w-full"
+                onClick={() => {
+                  // uploadlecture();
+                  UpdateUser()
+                  setModalEditProfile(false);
+                }}
+              >
+                Update Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* modal add lecture*/}
       {modal && (
         <div className=" fixed h-full w-full z-50">
@@ -297,7 +307,7 @@ function Profile() {
       )}
       {/* modal logout*/}
       {modallogout && (
-        <div className=" absolute h-full w-full">
+        <div className=" fixed h-full w-full z-50">
           <div className=" h-full absolute flex justify-center items-center w-full">
             <div className="w-full h-full absolute bg-[#24272C]  opacity-50"></div>
             <div className="bg-[#F7F6F1] w-[40%] z-50 rounded-xl p-20 flex justify-center flex-col relative">
@@ -338,14 +348,16 @@ function Profile() {
       )}
       {/* Top part */}
       <div className="w-full bg-[#24272C] px-32 py-10">
-        <img src={Logo} alt="" />
+        <img src={Logo} alt="" className="cursor-pointer" onClick={() => {
+            router("/");
+          }}/>
         {/* Profile container*/}
         <div className="flex items-center justify-between px-8 ">
           <div
             className="w-52 h-52 rounded-full bg-cover "
             style={{ backgroundImage: `url(${NoProfile})` }}
           >
-            <img src={Edit} alt="" className=" float-right" />
+            <img src={Edit} alt="" className=" float-right cursor-pointer" onClick={openModalEditProfile}/>
           </div>
           {/* Information */}
           {user && (
@@ -380,20 +392,20 @@ function Profile() {
         {/* Left Part */}
         <div className="w-96 pt-10">
           {/* you favorite */}
-          <div className="flex items-center justify-center cursor-pointer">
+          <div className="flex items-center cursor-pointer ml-12">
             <img src={LogoHeart} alt="" />
             <p className="text-3xl ml-2">Your favorite</p>
           </div>
           {/* line */}
           <hr className="h-px border-0 bg-gray-700 mb-1 mt-4" />
           {/* your bookmark */}
-          <div className="flex items-center mt-4 justify-center cursor-pointer">
+          <div className="flex items-center mt-4 cursor-pointer ml-12">
             <img src={LogoBookMark} alt="" />
             <p className="text-3xl ml-2">Your Bookmark</p>
           </div>
           <hr className="h-px border-0 bg-gray-700 mb-1 mt-4" />
           <div
-            className="flex items-center mt-4 justify-center cursor-pointer"
+            className="flex items-center mt-4 cursor-pointer ml-12"
             onClick={() => {
               setModallogout(true);
             }}
@@ -412,7 +424,7 @@ function Profile() {
                 if (index < 5)
                   return (
                     <Link to={file.url.replaceAll(" ", "%20")} className="Book mr-12 cursor-pointer" key={index}>
-                      <PDFViewer fileUrl={file.url.replaceAll(" ", "%20")} />
+                      <PDFViewer height={200} fileUrl={file.url.replaceAll(" ", "%20")} />
                       <p className="font-black">{dataDoc.doc[index].title}</p>
                       <p className="truncate">
                         {dataDoc.doc[index].firstname +

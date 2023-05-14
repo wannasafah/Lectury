@@ -10,6 +10,7 @@ import Select from "react-select";
 import axios from "axios";
 import path from "../../path";
 import uuid from "react-uuid";
+import Navbar from "../components/Navbar";
 
 function QandA() {
   const router = useNavigate();
@@ -59,54 +60,29 @@ function QandA() {
   };
   const options = [
     // Language
-    { value: "Language", label: "Language" },
     { value: "English", label: "English" },
     { value: "Chinese", label: "Chinese" },
     { value: "Japanese", label: "Japanese" },
     { value: "Korean", label: "Korean" },
-    { value: "French", label: "French" },
-    { value: "German", label: "German" },
-    { value: "Spanish", label: "Spanish" },
-    { value: "Russian", label: "Russian" },
+    { value: "Thai", label: "Thai" },
     // Math
-    { value: "Mathematics", label: "Mathematics" },
     { value: "Algebra", label: "Algebra" },
-    { value: "Geometry", label: "Geometry" },
-    { value: "Trigonometry", label: "Trigonometry" },
     { value: "Calculus", label: "Calculus" },
-    { value: "Statistics", label: "Statistics" },
-    { value: "Number Theory", label: "Number Theory" },
     // Science
-    { value: "Science", label: "Science" },
     { value: "Physics", label: "Physics" },
     { value: "Chemistry", label: "Chemistry" },
-    { value: "Biology", label: "Biology" },
-    { value: "Earth Science", label: "Earth Science" },
     { value: "Astronomy", label: "Astronomy" },
-    { value: "Computer Science", label: "Computer Science" },
-    { value: "Engineering", label: "Engineering" },
-    { value: "Psychology", label: "Psychology" },
-    { value: "Economics", label: "Economics" },
+    { value: "Computer", label: "Computer" },
     { value: "Law", label: "Law" },
-    { value: "Finance", label: "Finance" },
+    { value: "Religion", label: "Religion" },
+    { value: "Marketing", label: "Marketing" },
     { value: "Other", label: "Other" },
     // Social Studies
-    { value: "Social Studies", label: "Social Studies" },
     { value: "History", label: "History" },
-    { value: "Geography", label: "Geography" },
-    { value: "Political Science", label: "Political Science" },
     { value: "Sociology", label: "Sociology" },
-    { value: "Anthropology", label: "Anthropology" },
-    { value: "Business", label: "Business" },
     // Health
-    { value: "Health", label: "Health" },
-    { value: "Medicine", label: "Medicine" },
-    // Technology
-    { value: "Technology", label: "Technology" },
-    { value: "Artificial Intelligence", label: "Artificial Intelligence" },
-    { value: "Machine Learning", label: "Machine Learning" },
-    { value: "Data Science", label: "Data Science" },
-  ];
+    { value: "Health", label: "Health" }
+];
   useEffect(() => {
     axios
       .post(`${path}/getuser`, {
@@ -223,14 +199,7 @@ function QandA() {
       {/* Top Part */}
       <div className="bg-[#406C64] py-10">
         {/* Top Searchbar */}
-        <div
-          className="bg-[#24272C] mx-14 rounded-full px-16 py-3 cursor-pointer"
-          onClick={() => {
-            router("/home");
-          }}
-        >
-          <img src={Logo} alt="" />
-        </div>
+        <Navbar/>
         {/* Content Part */}
         <div className="flex px-32 mt-12 justify-between items-center">
           <div>
@@ -308,7 +277,9 @@ function QandA() {
                 ที่เอาเป็นแบบคร่าวๆก็ได้ค่ะ มีเนื้อหาอะไรบ้างคะ
                 หนูอยากศึกษาไว้ล่วงหน้าก่อนขึ้นม.3 ค่ะ ขอบคุณพี่ๆที่ตอบนะคะ
               </p>
-              <button className="w-full bg-[#406C64] h-10 text-lg text-white">
+              <button className="w-full bg-[#406C64] h-10 text-lg text-white" onClick={() => {
+                router("/comment")
+              }}>
                 Comment
               </button>
             </div>
