@@ -92,6 +92,7 @@ function Comment() {
             <div className="flex">
               <input
                 type="text"
+                value={textComment}
                 className="border border-[#366159] bg-transparent rounded-2xl w-3/4 py-1 px-4"
                 onChange={(e) => {
                   setTextComment(e.target.value);
@@ -100,6 +101,7 @@ function Comment() {
               <button
                 onClick={() => {
                   AddComment();
+                  setTextComment("");
                 }}
                 className="bg-[#366159] rounded-2xl px-5 text-white ml-4"
               >

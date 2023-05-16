@@ -17,6 +17,7 @@ function Filter() {
   const myDoc = location.state;
   const [modal, setModal] = useState(false);
   const [user, setUser] = useState();
+  const [document, setDocument] = useState(myDoc);
 
   const [modalContent, setModalContent] = useState({
     bookimg: "",
@@ -241,11 +242,34 @@ function Filter() {
       <Navbar />
       {/* Content */}
       <div className="my-20 max-w-5xl mx-auto">
-        <h1 className="text-6xl">New Arrival</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-6xl">New Arrival</h1>
+          <select
+            name=""
+            defaultValue="all"
+            id=""
+            className="px-4 py-2 rounded-lg text-lg font-bold outline-none"
+            onChange={(e) => {
+              if (e.target.value == "like") {
+                const strAscending = [...document].sort((a, b) =>
+                  a.like > b.like ? 1 : -1
+                );
+                setDocument(strAscending)
+              } else {
+                setDocument(myDoc);
+              }
+            }}
+          >
+            <option value="all">
+              All
+            </option>
+            <option value="like">Like</option>
+          </select>
+        </div>
         {/* Category */}
         <div className="grid grid-cols-4 gap-4 my-20">
-          {myDoc &&
-            myDoc.map((book, index) => {
+          {document &&
+            document.map((book, index) => {
               return (
                 <div
                   key={index}
