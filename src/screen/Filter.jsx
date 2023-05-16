@@ -1,71 +1,30 @@
-import React, { useEffect } from "react";
-import Logo from "../assets/image/logo-lightgreen.svg";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import Book1 from "../assets/image/Book1.svg";
-import NextIcon from "../assets/image/next-circle-icon.svg";
-import HomeImage1 from "../assets/image/HomeImage1.svg";
-import HomeImage2 from "../assets/image/HomeImage2.svg";
-import SearchLogo from "../assets/image/black-search-icon.svg";
-import GreenProfile from "../assets/image/white-green-profile-icon.svg";
-import FooterImage from "../assets/image/footer.svg";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import X from "../assets/image/x.png";
-import axios from "axios";
+import { useNavigate, useLocation } from "react-router-dom";
 import PDFViewer from "../components/PDFViewer";
+import axios from "axios";
+import X from "../assets/image/x.png";
 import path from "../../path";
+import { Link } from "react-router-dom";
 import Notlike from "../assets/image/notlike.svg";
 import NotBookmark from "../assets/image/notbookmark.svg";
 import Heart from "../assets/image/logoHeart.svg";
 import Bookmark from "../assets/image/logoBookMark.svg";
 
-function Home() {
+function Filter() {
   const router = useNavigate();
+  const location = useLocation();
+  const myDoc = location.state;
   const [modal, setModal] = useState(false);
-  const [dataDoc, setDataDoc] = useState();
   const [user, setUser] = useState();
+
   const [modalContent, setModalContent] = useState({
     bookimg: "",
     title: "dqwd",
     author: "qwdqd",
     pdfUrl: "",
   });
-  const [categories, setCategories] = useState([
-    {
-      id: 0,
-      name: "Science",
-    },
-    {
-      id: 1,
-      name: "Math",
-    },
-    {
-      id: 2,
-      name: "Thai",
-    },
-    {
-      id: 3,
-      name: "English",
-    },
-    {
-      id: 4,
-      name: "Health",
-    },
-    {
-      id: 5,
-      name: "History",
-    },
-  ]);
-  function GetDocument() {
-    axios
-      .get(`${path}/getdocuments`)
-      .then((res) => {
-        console.log(res.data);
-        setDataDoc(res.data);
-      })
-      .catch((err) => console.log(err));
-  }
+
   function openModal(
     url,
     bookTitle,
@@ -87,10 +46,6 @@ function Home() {
     setModal(true);
   }
 
-  function closeModal() {
-    setModal(false);
-  }
-
   function GetUser() {
     axios
       .post(`${path}/getuser`, {
@@ -105,73 +60,15 @@ function Home() {
       });
   }
   useEffect(() => {
-    GetDocument();
     GetUser();
   }, []);
 
-  function DeleteLike(title) {
-    let index = user.favorites.indexOf(title);
-    axios
-      .post(`${path}/deletelike`, {
-        user_id: user.id,
-        index: index,
-        favorites: title,
-      })
-      .then((res) => {
-        console.log(res.data);
-        user.favorites.splice(index, 1);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  function closeModal() {
+    setModal(false);
   }
-
-  function AddLike(title) {
-    axios
-      .post(`${path}/addlike`, {
-        user_id: user.id,
-        favorites: title,
-      })
-      .then((res) => {
-        console.log(res.data);
-        user.favorites.push(title);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  if (myDoc == null) {
+    window.location.replace("/category");
   }
-
-  function DeleteBookmarks(title) {
-    let index = user.bookmarks.indexOf(title);
-    axios
-      .post(`${path}/deletebookmark`, {
-        user_id: user.id,
-        index: index,
-      })
-      .then((res) => {
-        console.log(res.data);
-        user.bookmarks.splice(index, 1);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  function AddBookmarks(title) {
-    axios
-      .post(`${path}/addbookmark`, {
-        user_id: user.id,
-        bookmarks: title,
-      })
-      .then((res) => {
-        console.log(res.data);
-        user.bookmarks.push(title);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   function RenderModal() {
     const [like, setLike] = useState(modalContent.like);
     const [bookmark, setBookmark] = useState(modalContent.bookmark);
@@ -269,10 +166,70 @@ function Home() {
       </div>
     );
   }
+  function DeleteLike(title) {
+    let index = user.favorites.indexOf(title);
+    axios
+      .post(`${path}/deletelike`, {
+        user_id: user.id,
+        index: index,
+        favorites: title,
+      })
+      .then((res) => {
+        console.log(res.data);
+        user.favorites.splice(index, 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
+  function AddLike(title) {
+    axios
+      .post(`${path}/addlike`, {
+        user_id: user.id,
+        favorites: title,
+      })
+      .then((res) => {
+        console.log(res.data);
+        user.favorites.push(title);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function DeleteBookmarks(title) {
+    let index = user.bookmarks.indexOf(title);
+    axios
+      .post(`${path}/deletebookmark`, {
+        user_id: user.id,
+        index: index,
+      })
+      .then((res) => {
+        console.log(res.data);
+        user.bookmarks.splice(index, 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function AddBookmarks(title) {
+    axios
+      .post(`${path}/addbookmark`, {
+        user_id: user.id,
+        bookmarks: title,
+      })
+      .then((res) => {
+        console.log(res.data);
+        user.bookmarks.push(title);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   return (
-    <div className="min-h-screen bg-[#F7F6F1]">
-      {/* modal add lecture*/}
+    <div className="min-h-screen bg-[#F7F6F1] py-10">
       {modal && (
         <div className="h-full w-full fixed z-10">
           <div className=" h-full absolute flex justify-center items-center w-full">
@@ -281,21 +238,17 @@ function Home() {
           </div>
         </div>
       )}
-      <br />
-      {/* Navbar */}
       <Navbar />
-
-      <img src={HomeImage1} className="px-44 mt-8" alt="" />
-      {/* New Arrival */}
-      <div className="px-44  mt-8">
-        <h1 className="text-4xl">New Arrival</h1>
-        {/* Book Container*/}
-        <div className="flex gap-x-9 gap-y-4 mt-10 w-full items-center overflow-y-auto">
-          {dataDoc &&
-            dataDoc.map((book, index) => {
+      {/* Content */}
+      <div className="my-20 max-w-5xl mx-auto">
+        <h1 className="text-6xl">New Arrival</h1>
+        {/* Category */}
+        <div className="grid grid-cols-4 gap-4 my-20">
+          {myDoc &&
+            myDoc.map((book, index) => {
               return (
                 <div
-                key={index}
+                  key={index}
                   className="cursor-pointer mx-auto"
                   id="book"
                   onClick={() => {
@@ -327,58 +280,9 @@ function Home() {
                 </div>
               );
             })}
-          <div>
-            <img
-              src={NextIcon}
-              alt=""
-              className="cursor-pointer"
-              onClick={() => {
-                router("/showmore", { state: { title: "New Arrival" } });
-              }}
-            />
-          </div>
         </div>
       </div>
-      <img
-        src={HomeImage2}
-        className="px-44 mt-8 w-full cursor-pointer"
-        alt=""
-        onClick={() => {
-          router("/question");
-        }}
-      />
-      {/* Category */}
-      <div className="px-44 mt-8">
-        <h1 className="text-4xl">Category</h1>
-        {/* Category Container */}
-        <div className="flex mt-10 gap-x-11 gap-y-6 items-center w-full">
-          {/* Category */}
-          {categories.map((category, index) => {
-            if (index < 4)
-              return (
-                <div key={index} className="bg-[#D9D9D9] rounded-2xl px-16 py-4 h-full">
-                  <h2 className="text-center text-xl font-semibold">
-                    {category.name}
-                  </h2>
-                  <img src={Book1} alt="" className="" />
-                </div>
-              );
-          })}
-          <div>
-            <img
-              src={NextIcon}
-              alt=""
-              className="cursor-pointer shrink-0"
-              onClick={() => {
-                router("/category");
-              }}
-            />
-          </div>
-        </div>
-      </div>
-      <Footer />
     </div>
   );
 }
-
-export default Home;
+export default Filter;
