@@ -35,7 +35,7 @@ function Register() {
   }
 
   return (
-    <div className=" flex bg-[#F7F6F1] h-screen">
+    <div className=" flex bg-[#F7F6F1] min-h-screen">
       {/* top line */}
       <div className="absolute w-full mt-8 px-14">
         <hr className="h-px border-0 bg-gray-700 mb-1" />
