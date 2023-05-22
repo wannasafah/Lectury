@@ -6,9 +6,24 @@ import Book1 from "../assets/image/Book1.svg";
 import NextIcon from "../assets/image/next-circle-icon.svg";
 import HomeImage1 from "../assets/image/HomeImage1.svg";
 import HomeImage2 from "../assets/image/HomeImage2.svg";
-import SearchLogo from "../assets/image/black-search-icon.svg";
-import GreenProfile from "../assets/image/white-green-profile-icon.svg";
-import FooterImage from "../assets/image/footer.svg";
+import English from "../assets/image/english.png";
+import Chinese from "../assets/image/chinese.png";
+import Japanese from "../assets/image/japanese.png";
+import Korean from "../assets/image/korean.png";
+import Thai from "../assets/image/thai.png";
+import Algebra from "../assets/image/algebra.png";
+import Calculus from "../assets/image/calculus.png";
+import Physics from "../assets/image/physics.png";
+import Chemistry from "../assets/image/chemistry.png";
+import Astronomy from "../assets/image/astronomy.png";
+import Computer from "../assets/image/computer.png";
+import Law from "../assets/image/law.png";
+import Religion from "../assets/image/religion.png";
+import Marketing from "../assets/image/marketing.png";
+import Other from "../assets/image/other.png";
+import History from "../assets/image/history.png";
+import Sociology from "../assets/image/sociology.png";
+import Health from "../assets/image/health.png";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import X from "../assets/image/x.png";
@@ -31,31 +46,30 @@ function Home() {
     author: "qwdqd",
     pdfUrl: "",
   });
-  const [categories, setCategories] = useState([
-    {
-      id: 0,
-      name: "Science",
-    },
-    {
-      id: 1,
-      name: "Math",
-    },
-    {
-      id: 2,
-      name: "Thai",
-    },
-    {
-      id: 3,
-      name: "English",
-    },
-    {
-      id: 4,
-      name: "Health",
-    },
-    {
-      id: 5,
-      name: "History",
-    },
+  const [category, setCategory] = useState([
+    // Language
+    { value: "English", label: "English", img: English },
+    { value: "Chinese", label: "Chinese", img: Chinese },
+    { value: "Japanese", label: "Japanese", img: Japanese },
+    { value: "Korean", label: "Korean", img: Korean },
+    { value: "Thai", label: "Thai", img: Thai },
+    // Math
+    { value: "Algebra", label: "Algebra", img: Algebra },
+    { value: "Calculus", label: "Calculus", img: Calculus },
+    // Science
+    { value: "Physics", label: "Physics", img: Physics },
+    { value: "Chemistry", label: "Chemistry", img: Chemistry },
+    { value: "Astronomy", label: "Astronomy", img: Astronomy },
+    { value: "Computer", label: "Computer", img: Computer },
+    { value: "Law", label: "Law", img: Law },
+    { value: "Religion", label: "Religion", img: Religion },
+    { value: "Marketing", label: "Marketing", img: Marketing },
+    { value: "Other", label: "Other", img: Other },
+    // Social Studies
+    { value: "History", label: "History", img: History },
+    { value: "Sociology", label: "Sociology", img: Sociology },
+    // Health
+    { value: "Health", label: "Health", img: Health },
   ]);
   function GetDocument() {
     axios
@@ -108,7 +122,25 @@ function Home() {
     GetDocument();
     GetUser();
   }, []);
-
+  function FilterComponent(name) {
+    const filter = dataDoc.filter(
+      (value) => value.doc.category.indexOf(name) != -1
+    );
+    router("/Filterbook", { state: filter });
+  }
+  function RenderCard({ item, index }) {
+    return (
+      <div
+        onClick={() => {
+          FilterComponent(item.label);
+        }}
+        className="bg-[#D9D9D9] text-center rounded-2xl col-span-1 p-10 cursor-pointer"
+      >
+        <h2 className="text-3xl">{item.label}</h2>
+        <img src={item.img} alt="" className="mx-auto mt-2 w-full mt-4" />
+      </div>
+    );
+  }
   function DeleteLike(title) {
     let index = user.favorites.indexOf(title);
     axios
@@ -285,17 +317,28 @@ function Home() {
       {/* Navbar */}
       <Navbar />
 
-      <img src={HomeImage1} className="px-44 mt-8" alt="" />
+      <img src={HomeImage1} className="px-44 mt-8 w-full" alt="" />
       {/* New Arrival */}
       <div className="px-44  mt-8">
-        <h1 className="text-4xl">New Arrival</h1>
+        <div className="flex items-center justify-between cursor-pointer">
+          <h1 className="text-4xl">New Arrival</h1>
+          <h1
+            className="text-xl "
+            onClick={() => {
+              router("/showmore", { state: { title: "New Arrival" } });
+            }}
+          >
+            show more
+          </h1>
+        </div>
+
         {/* Book Container*/}
         <div className="flex gap-x-9 gap-y-4 mt-10 w-full items-center overflow-y-auto">
           {dataDoc &&
             dataDoc.map((book, index) => {
               return (
                 <div
-                key={index}
+                  key={index}
                   className="cursor-pointer mx-auto"
                   id="book"
                   onClick={() => {
@@ -327,16 +370,6 @@ function Home() {
                 </div>
               );
             })}
-          <div>
-            <img
-              src={NextIcon}
-              alt=""
-              className="cursor-pointer"
-              onClick={() => {
-                router("/showmore", { state: { title: "New Arrival" } });
-              }}
-            />
-          </div>
         </div>
       </div>
       <img
@@ -349,31 +382,25 @@ function Home() {
       />
       {/* Category */}
       <div className="px-44 mt-8">
-        <h1 className="text-4xl">Category</h1>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-4xl">Category</h1>
+          <h1
+            onClick={() => {
+              router("/category");
+            }}
+            className="text-xl cursor-pointer"
+          >
+            Show More
+          </h1>
+        </div>
+
         {/* Category Container */}
-        <div className="flex mt-10 gap-x-11 gap-y-6 items-center w-full">
+        <div className="grid grid-cols-5 mt-10 gap-4 items-center w-full mx-auto">
           {/* Category */}
-          {categories.map((category, index) => {
-            if (index < 4)
-              return (
-                <div key={index} className="bg-[#D9D9D9] rounded-2xl px-16 py-4 h-full">
-                  <h2 className="text-center text-xl font-semibold">
-                    {category.name}
-                  </h2>
-                  <img src={Book1} alt="" className="" />
-                </div>
-              );
+          {category.map((category, index) => {
+            if (index < 5)
+              return <RenderCard key={index} item={category} index={index} />;
           })}
-          <div>
-            <img
-              src={NextIcon}
-              alt=""
-              className="cursor-pointer shrink-0"
-              onClick={() => {
-                router("/category");
-              }}
-            />
-          </div>
         </div>
       </div>
       <Footer />

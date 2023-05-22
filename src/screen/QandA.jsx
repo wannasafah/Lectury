@@ -19,36 +19,9 @@ function QandA() {
   const [select, setSelect] = useState([]);
   const [description, setDescription] = useState("");
   const [user, setUser] = useState();
-  const [question, setQuestion] = useState([
-    {
-      id: 0,
-      name: "Wannasa Chonchoochart",
-      title: "ทำยังไงค้าา",
-      question:
-        "ถึงรุ่นพี่ที่จบ ม.3 นะคะ คือหนูอยากทราบว่า เนื้อหา ม.3 ที่เอาเป็นแบบคร่าวๆก็ได้ค่ะ มีเนื้อหาอะไรบ้างคะ หนูอยากศึกษาไว้ล่วงหน้าก่อนขึ้นม.3 ค่ะ ขอบคุณพี่ๆที่ตอบนะคะ",
-    },
-    {
-      id: 1,
-      name: "Wannasa Chonchoochart",
-      title: "ทำยังไงค้าา",
-      question:
-        "ถึงรุ่นพี่ที่จบ ม.3 นะคะ คือหนูอยากทราบว่า เนื้อหา ม.3 ที่เอาเป็นแบบคร่าวๆก็ได้ค่ะ มีเนื้อหาอะไรบ้างคะ หนูอยากศึกษาไว้ล่วงหน้าก่อนขึ้นม.3 ค่ะ ขอบคุณพี่ๆที่ตอบนะคะ",
-    },
-    {
-      id: 2,
-      name: "Wannasa Chonchoochart",
-      title: "ทำยังไงค้าา",
-      question:
-        "ถึงรุ่นพี่ที่จบ ม.3 นะคะ คือหนูอยากทราบว่า เนื้อหา ม.3 ที่เอาเป็นแบบคร่าวๆก็ได้ค่ะ มีเนื้อหาอะไรบ้างคะ หนูอยากศึกษาไว้ล่วงหน้าก่อนขึ้นม.3 ค่ะ ขอบคุณพี่ๆที่ตอบนะคะ",
-    },
-    {
-      id: 3,
-      name: "Wannasa Chonchoochart",
-      title: "ทำยังไงค้าา",
-      question:
-        "ถึงรุ่นพี่ที่จบ ม.3 นะคะ คือหนูอยากทราบว่า เนื้อหา ม.3 ที่เอาเป็นแบบคร่าวๆก็ได้ค่ะ มีเนื้อหาอะไรบ้างคะ หนูอยากศึกษาไว้ล่วงหน้าก่อนขึ้นม.3 ค่ะ ขอบคุณพี่ๆที่ตอบนะคะ",
-    },
-  ]);
+  const [question, setQuestion] = useState();
+  const [filter, setFilter] = useState("");
+  const [backup, setBackup] = useState();
   const style = {
     control: (base) => ({
       ...base,
@@ -81,9 +54,9 @@ function QandA() {
     { value: "History", label: "History" },
     { value: "Sociology", label: "Sociology" },
     // Health
-    { value: "Health", label: "Health" }
-];
-  useEffect(() => {
+    { value: "Health", label: "Health" },
+  ];
+  function Getuser() {
     axios
       .post(`${path}/getuser`, {
         id: localStorage.getItem("userid"),
@@ -94,6 +67,30 @@ function QandA() {
       .catch((err) => {
         console.log(err);
       });
+  }
+  function GetThreads() {
+    axios
+      .get(`${path}/mythread`)
+      .then((res) => {
+        console.log(res.data);
+        setBackup(res.data);
+        console.log(filter);
+        if (filter != "") {
+          const filtertopic = res.data.filter(
+            (q) => q.userid == localStorage.getItem("userid")
+          );
+          setQuestion(filtertopic);
+        } else {
+          setQuestion(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  useEffect(() => {
+    Getuser();
+    GetThreads();
   }, []);
   function openModal() {
     setModal(true);
@@ -104,6 +101,19 @@ function QandA() {
     setModal(false);
     document.body.style.position = "";
     document.body.style.top = "";
+  }
+  function DeleteThread(id) {
+    axios
+      .post(`${path}/deletethread`, {
+        thread_id: id,
+      })
+      .then((res) => {
+        console.log(res.data);
+        GetThreads();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   function Addquestion() {
     axios
@@ -123,6 +133,7 @@ function QandA() {
       })
       .then((res) => {
         console.log(res.data);
+        GetThreads();
       })
       .catch((err) => {
         console.log(err);
@@ -199,7 +210,7 @@ function QandA() {
       {/* Top Part */}
       <div className="bg-[#406C64] py-10">
         {/* Top Searchbar */}
-        <Navbar/>
+        <Navbar />
         {/* Content Part */}
         <div className="flex px-32 mt-12 justify-between items-center">
           <div>
@@ -237,6 +248,17 @@ function QandA() {
             <input
               type="search"
               name="q"
+              onChange={(e) => {
+                if (e.target.value != "") {
+                  const filtertopic = backup.filter(
+                    (q) => q.thread.topic.indexOf(e.target.value) != -1
+                  );
+
+                  setQuestion(filtertopic);
+                } else {
+                  setQuestion(backup);
+                }
+              }}
               className="py-2 text-sm bg-transparent rounded-md pl-10 focus:outline-none w-full px-2"
               placeholder=""
               autoComplete="off"
@@ -246,44 +268,79 @@ function QandA() {
           <select
             name=""
             id=""
+            defaultValue={"all"}
             className="focus:outline-none border border-[#406C64] bg-transparent w-56 ml-6 px-3"
+            onChange={(e) => {
+              setFilter(e.target.value);
+              if (e.target.value == "mytopic") {
+                const filtertopic = question.filter(
+                  (q) => q.userid == localStorage.getItem("userid")
+                );
+                setQuestion(filtertopic);
+              } else {
+                setQuestion(backup);
+              }
+            }}
           >
-            <option value=""> </option>
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="opel">Opel</option>
-            <option value="audi">Audi</option>
+            <option value="all">All</option>
+            <option value="mytopic">My Topic</option>
           </select>
         </div>
         <h2 className="text-xl px-32 mt-12">
-          We've Found <span className="text-[#406C64]">858</span> Question!
+          We've Found{" "}
+          {question && (
+            <span className="text-[#406C64]">{question.length}</span>
+          )}{" "}
+          Question!
         </h2>
-        <div className="mt-8">
-          {question.map((question, index) => (
-            <div
-              key={index}
-              className="mx-32 border border-[#406C64] rounded-2xl overflow-hidden mb-16"
-            >
-              <div className="flex items-center px-12 py-6">
-                <div
-                  className="w-12 h-12 bg-white rounded-full bg-cover"
-                  style={{ backgroundImage: `url(${NoProfile})` }}
-                ></div>
-                <p className="ml-4 text-xl">Wannasa Chonchoochart</p>
+        <div className="mt-8 space-y-4">
+          {question &&
+            user &&
+            question.map((question, index) => (
+              <div
+                key={index}
+                className="mx-32 border border-[#406C64] rounded-2xl overflow-hidden relative"
+              >
+                {question.userid == user.id ? (
+                  <img
+                    className="absolute top-4 right-4 cursor-pointer"
+                    src={X}
+                    alt=""
+                    onClick={() => {
+                      if (confirm("Are you sore delete thread")) {
+                        DeleteThread(question.t_id);
+                      }
+                    }}
+                  />
+                ) : null}
+                <div className="flex items-center px-12 py-6">
+                  <div
+                    className="w-12 h-12 bg-white rounded-full bg-cover"
+                    style={{ backgroundImage: `url(${NoProfile})` }}
+                  ></div>
+                  <p className="ml-4 text-xl">
+                    {question.firstname + " " + question.lastname}
+                  </p>
+                </div>
+                <h3 className="mx-16 text-xl font-bold">
+                  {question.thread.topic}
+                </h3>
+                <p className="mx-16 mt-2 mb-6">{question.thread.description}</p>
+                <button
+                  className="w-full bg-[#406C64] h-10 text-lg text-white"
+                  onClick={() => {
+                    router("/comment", {
+                      state: {
+                        question: question,
+                        index: index,
+                      },
+                    });
+                  }}
+                >
+                  Comment
+                </button>
               </div>
-              <h3 className="mx-16 text-lg">Title</h3>
-              <p className="mx-16 mt-2 mb-6">
-                ถึงรุ่นพี่ที่จบ ม.3 นะคะ คือหนูอยากทราบว่า เนื้อหา ม.3
-                ที่เอาเป็นแบบคร่าวๆก็ได้ค่ะ มีเนื้อหาอะไรบ้างคะ
-                หนูอยากศึกษาไว้ล่วงหน้าก่อนขึ้นม.3 ค่ะ ขอบคุณพี่ๆที่ตอบนะคะ
-              </p>
-              <button className="w-full bg-[#406C64] h-10 text-lg text-white" onClick={() => {
-                router("/comment")
-              }}>
-                Comment
-              </button>
-            </div>
-          ))}
+            ))}
           <br />
         </div>
       </div>

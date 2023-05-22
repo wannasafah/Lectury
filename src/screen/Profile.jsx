@@ -37,11 +37,12 @@ function Profile() {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState();
   const [dataDoc, setDataDoc] = useState();
-  const [profileImg, setProfileImg] = useState();
   const [editFirstname, setEditFirstname] = useState("");
-  const [editLastname, setEditLastname] = useState("")
-  const [editPassword, setEditPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [editLastname, setEditLastname] = useState("");
+  const [editPassword, setEditPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [images, setImages] = useState([]);
+  const [imageURLs, setImageURLs] = useState([]);
   const style = {
     control: (base) => ({
       ...base,
@@ -51,6 +52,16 @@ function Profile() {
       borderColor: "#406C64",
     }),
   };
+  function Preview_Img(img) {
+    if (img.length < 1) return;
+    const newImageUrls = [];
+    img.forEach((image) => newImageUrls.push(URL.createObjectURL(image)));
+    setImageURLs(newImageUrls);
+  }
+  function onImageChange(e) {
+    setImages([...e.target.files]);
+    Preview_Img([...e.target.files]);
+  }
   const options = [
     // Language
     { value: "English", label: "English" },
@@ -74,24 +85,57 @@ function Profile() {
     { value: "History", label: "History" },
     { value: "Sociology", label: "Sociology" },
     // Health
-    { value: "Health", label: "Health" }
-];
+    { value: "Health", label: "Health" },
+  ];
 
-
-  function UpdateUser(){
+  function UpdateUser() {
     console.log(1);
-    axios.post(`${path}/updateuser`, {
-      id : localStorage.getItem('userid'),
-      firstname : editFirstname,
-      lastname : editLastname,
-      password : editPassword
-    })
+
+    if (images.length != 0) {
+      const file = images[0]; // the file object of the image
+      const reader = new FileReader();
+      let name = images[0].name;
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64Img = reader.result.split(",")[1];
+        axios
+          .post(`${path}/upload-img`, {
+            id: localStorage.getItem("userid"),
+            profile: base64Img,
+            profileName: name,
+          })
+          .then((res) => {
+            console.log(res.data);
+            GetUser();
+          })
+          .catch((err) => console.log(err));
+      };
+      axios.post(`${path}/updateuser`, {
+        id: localStorage.getItem("userid"),
+        firstname: editFirstname,
+        lastname: editLastname,
+        password: editPassword,
+      }).then((res) =>{
+        GetUser();
+      });
+    } else {
+      axios.post(`${path}/updateuser`, {
+        id: localStorage.getItem("userid"),
+        firstname: editFirstname,
+        lastname: editLastname,
+        password: editPassword,
+      }).then((res) =>{
+        GetUser();
+      });
+    }
   }
-  function openModalEditProfile(){
-    setEditFirstname(user.firstname)
-    setEditLastname(user.lastname)
-    setModalEditProfile(true)
-  } 
+  function openModalEditProfile() {
+    setEditFirstname(user.firstname);
+    setEditLastname(user.lastname);
+    setEditPassword(user.password);
+    setConfirmPassword(user.password);
+    setModalEditProfile(true);
+  }
   function GetUser() {
     axios
       .post(`${path}/getuser`, {
@@ -99,7 +143,7 @@ function Profile() {
       })
       .then((res) => {
         setUser(res.data);
-        console.log(res.data)
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -142,7 +186,7 @@ function Profile() {
         })
         .then((res) => {
           console.log(res.data);
-          GetMyDocument()
+          GetMyDocument();
         })
         .catch((err) => {
           console.log(err);
@@ -208,22 +252,46 @@ function Profile() {
               />
               {/* upload file */}
               <p className="mb-1">Upload Profile Image</p>
-              <input
-                className=""
-                id="upfile"
-                type="file"
-                onChange={(e) => {
-                  setProfileImg(e.target.files[0]);
-                  console.log(e.target.files[0])
-                }}
-              />
+              <div className="mx-auto rounded-full cursor-pointer">
+                <div>
+                  <input
+                    type="file"
+                    className="hidden"
+                    multiple
+                    id="file-img"
+                    onChange={onImageChange}
+                  />
+                  <label htmlFor="file-img">
+                    {imageURLs.length ? (
+                      imageURLs.map((imageSrc, idx) => {
+                        return (
+                          <img
+                            className="rounded-full h-[150px] w-[150px] object-cover"
+                            key={idx}
+                            src={imageSrc}
+                          />
+                        );
+                      })
+                    ) : (
+                      <img
+                        className="rounded-full"
+                        src={NoProfile}
+                        width={150}
+                        alt=""
+                      />
+                    )}
+                  </label>
+                </div>
+              </div>
 
               <button
                 className=" bg-[#406C64] rounded-2xl text-[#ffff] mt-8 py-1.5 w-full"
                 onClick={() => {
                   // uploadlecture();
-                  UpdateUser()
+                  UpdateUser();
                   setModalEditProfile(false);
+                  setImageURLs([]);
+                  setImages([]);
                 }}
               >
                 Update Profile
@@ -348,17 +416,43 @@ function Profile() {
       )}
       {/* Top part */}
       <div className="w-full bg-[#24272C] px-32 py-10">
-        <img src={Logo} alt="" className="cursor-pointer" onClick={() => {
+        <img
+          src={Logo}
+          alt=""
+          className="cursor-pointer"
+          onClick={() => {
             router("/");
-          }}/>
+          }}
+        />
         {/* Profile container*/}
         <div className="flex items-center justify-between px-8 ">
-          <div
-            className="w-52 h-52 rounded-full bg-cover "
-            style={{ backgroundImage: `url(${NoProfile})` }}
-          >
-            <img src={Edit} alt="" className=" float-right cursor-pointer" onClick={openModalEditProfile}/>
-          </div>
+          {user &&
+            (user.image != "" ? (
+              <div className="w-52 h-52 rounded-full relative">
+                <img
+                  className="rounded-full w-52 h-52 object-cover"
+                  src={user.image}
+                />
+                <img
+                  src={Edit}
+                  alt=""
+                  className="cursor-pointer absolute top-0 right-0"
+                  onClick={openModalEditProfile}
+                />
+              </div>
+            ) : (
+              <div
+                className="w-52 h-52 rounded-full bg-cover "
+                style={{ backgroundImage: `url(${NoProfile})` }}
+              >
+                <img
+                  src={Edit}
+                  alt=""
+                  className=" float-right cursor-pointer"
+                  onClick={openModalEditProfile}
+                />
+              </div>
+            ))}
           {/* Information */}
           {user && (
             <div className="">
@@ -394,14 +488,28 @@ function Profile() {
           {/* you favorite */}
           <div className="flex items-center cursor-pointer ml-12">
             <img src={LogoHeart} alt="" />
-            <p className="text-3xl ml-2">Your favorite</p>
+            <p
+              onClick={() => {
+                router("/showmore", { state: { title: "favorite" } });
+              }}
+              className="text-3xl ml-2"
+            >
+              Your favorite
+            </p>
           </div>
           {/* line */}
           <hr className="h-px border-0 bg-gray-700 mb-1 mt-4" />
           {/* your bookmark */}
           <div className="flex items-center mt-4 cursor-pointer ml-12">
             <img src={LogoBookMark} alt="" />
-            <p className="text-3xl ml-2">Your Bookmark</p>
+            <p
+              onClick={() => {
+                router("/showmore", { state: { title: "bookmark" } });
+              }}
+              className="text-3xl ml-2"
+            >
+              Your Bookmark
+            </p>
           </div>
           <hr className="h-px border-0 bg-gray-700 mb-1 mt-4" />
           <div
@@ -423,8 +531,15 @@ function Profile() {
               dataDoc.file.map((file, index) => {
                 if (index < 5)
                   return (
-                    <Link to={file.url.replaceAll(" ", "%20")} className="Book mr-12 cursor-pointer" key={index}>
-                      <PDFViewer height={200} fileUrl={file.url.replaceAll(" ", "%20")} />
+                    <Link
+                      to={file.url.replaceAll(" ", "%20")}
+                      className="Book mr-12 cursor-pointer"
+                      key={index}
+                    >
+                      <PDFViewer
+                        height={200}
+                        fileUrl={file.url.replaceAll(" ", "%20")}
+                      />
                       <p className="font-black">{dataDoc.doc[index].title}</p>
                       <p className="truncate">
                         {dataDoc.doc[index].firstname +

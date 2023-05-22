@@ -4,14 +4,55 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import path from "../../path";
 import uuid from "react-uuid";
+import { useLocation } from "react-router-dom";
+import X from "../assets/image/x.png";
+
 function Comment() {
-  const [thread, setThread] = useState();
   const [comment, setComment] = useState();
   const [textComment, setTextComment] = useState("");
+  const location = useLocation();
+  const [user, setUser] = useState();
+  const [thread, setThread] = useState(location.state.question);
+  const [threadIndex, setThreadIndex] = useState(location.state.index);
+  if (location.state == undefined) {
+    window.location.replace("/question");
+  }
+  function Getuser() {
+    axios
+      .post(`${path}/getuser`, {
+        id: localStorage.getItem("userid"),
+      })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  useEffect(() => {
+    Getuser();
+    GetThread();
+  }, []);
+
+  function DeleteComment(index) {
+    axios
+      .post(`${path}/deletecomment`, {
+        thread_index: threadIndex,
+        comment_index: index,
+      })
+      .then((res) => {
+        console.log(res.data);
+        GetThread();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   function GetThread() {
     axios
       .post(`${path}/getthreadid`, {
-        t_id: "44863703-8459-a2f4-f953-f6fa9a7cd9e9",
+        t_id: thread.t_id,
       })
       .then((res) => {
         setThread(res.data[0]);
@@ -22,19 +63,14 @@ function Comment() {
         console.log(err);
       });
   }
-  useEffect(() => {
-    GetThread();
-  }, []);
-
   function AddComment() {
-    console.log(1);
     axios
       .post(`${path}/addcomment`, {
         t_id: thread.t_id,
         comment: {
           id: uuid(),
-          firstname: "jean",
-          lastname: "tiwat",
+          firstname: user.firstname,
+          lastname: user.lastname,
           comment: textComment,
           user_id: localStorage.getItem("userid"),
         },
@@ -43,7 +79,7 @@ function Comment() {
         console.log(res.data);
         if (res.data == "successfully") {
           GetThread();
-          setTextComment("")
+          setTextComment("");
         }
       })
       .catch((err) => {
@@ -67,15 +103,37 @@ function Comment() {
           <div className="ml-16">
             <p className="text-lg mt-3">{thread.thread.topic}</p>
             <p className="mt-3">{thread.thread.description}</p>
-            <button className="px-4 py-1 rounded-2xl border border-[#24272C] mt-3 cursor-default">
-              ทั่วไป
-            </button>
+            <div className="space-x-2">
+              {thread.category.map((e, index) => (
+                <button
+                  key={index}
+                  className="px-4 py-1 rounded-2xl border border-[#24272C] mt-3 cursor-default"
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
           </div>
           <hr className="my-12 border-0 bg-black h-px" />
           {/* User Comment */}
-          {comment &&
+          {comment && thread && user &&
             comment.map((value, index) => (
-              <div key={index} className="border border-[#366159] rounded-2xl p-4 mx-12 mb-6">
+              <div
+                key={index}
+                className="border border-[#366159] rounded-2xl p-4 mx-12 mb-6 relative"
+              >
+                {value.user_id == user.id || thread.userid == user.id ? (
+                  <img
+                    onClick={() => {
+                      if (confirm("Are you sore delete comment")) {
+                        DeleteComment(index);
+                      }
+                    }}
+                    className="absolute right-4 top-4 w-5 cursor-pointer"
+                    src={X}
+                    alt=""
+                  />
+                ) : null}
                 <div className="flex items-center">
                   <div className="bg-white w-10 h-10 rounded-full"></div>
                   <h1 className="ml-4 text-xl">
